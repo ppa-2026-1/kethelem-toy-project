@@ -1,0 +1,66 @@
+# USER API ================================================================
+
+@host=localhost:8080
+
+### TODOS OS USUÁRIOS
+GET /api/v1/users HTTP/1.1
+Host: {{host}}
+Accept: application/json
+
+### Create a new valid User
+POST /api/v1/users HTTP/1.1
+Host: {{host}}
+Content-Type: application/json
+
+{
+    "email": "batata@potato.com",
+    "password": "1234RT56",
+    "handle": "papas",
+    "name": "Kartofel",
+    "roles": [
+        "ROLE_USER"
+    ],
+    "company": "potato inc"
+}
+
+### Try and create an invalid User
+POST /api/v1/users HTTP/1.1
+Host: {{host}}
+Content-Type: application/json
+
+{
+    "email": "batata@potato.com",
+    "password": "1234",
+    "handle": "papas",
+    "name": "Kartofel",
+    "roles": [
+        "ROLE_USER"
+    ],
+    "company": "potato inc"
+}
+
+### GET primeira página (padrão: page=1, size=10)
+GET /api/v1/vulnerability-reports HTTP/1.1
+Host: {{host}}
+Accept: application/json
+
+### GET segunda página com size=5
+GET /api/v1/vulnerability-reports?page=2&size=5 HTTP/1.1
+Host: {{host}}
+Accept: application/json
+
+### GET terceira página com size=10
+GET /api/v1/vulnerability-reports?page=3&size=10 HTTP/1.1
+Host: {{host}}
+Accept: application/json
+
+### GET com size inválido (deve retornar 400)
+GET /api/v1/vulnerability-reports?page=1&size=9999 HTTP/1.1
+Host: {{host}}
+Accept: application/json
+
+### GET com page negativa (deve retornar 400)
+GET /api/v1/vulnerability-reports?page=-1&size=10 HTTP/1.1
+Host: {{host}}
+Accept: application/json
+
