@@ -1,19 +1,32 @@
 # USER API ================================================================
 
 @host=localhost:8080
+# AuthController
+### Autenticar e receber um TOKEN
+POST /api/auth/login HTTP/1.1
+Host: localhost:8080
+
+{
+    "username": "teste",
+    "password": "1234"
+}
+
+### Sair
+POST /api/auth/logout HTTP/1.1
+Host: localhost:8080
 
 ### TODOS OS USUÁRIOS
 GET /api/v1/users HTTP/1.1
 Host: localhost:8080
 Accept: application/json
 
-
-### Get all users
+### Get all users --- AUTENTICADO
 # @name= getAllUsers
 
 GET /api/v1/users HTTP/1.1
 Host: {{host}}
 Accept: application/json
+Authorization: Bearer akldlajksdkasjdl
 
 ### Create a new valid User
 # @name = createNewUser
@@ -23,7 +36,7 @@ Host: {{host}}
 Content-Type: application/json
 
 {
-    "email": "batata",
+    "email": "batata@potato.com",
     "password": "1234RT56",
     "handle": "papas",
     "name": "Kartofel",
@@ -52,171 +65,16 @@ Content-Type: application/json
     "company": "potato inc"
 }
 
-### Criar usuário Kethelem
-# @name = createKethelem
+### GET FIRST 10 REPORTS
 
-POST /api/v1/users HTTP/1.1
-Host: {{host}}
-Content-Type: application/json
-
-{
-    "email": "kethelem.socoowski@gmail.com",
-    "password": "Keth1234",
-    "handle": "kethelem",
-    "name": "Kethelem Socoowski",
-    "roles": [
-        "ROLE_USER"
-    ]
-}
-
-
-# TICKET API ================================================================
-
-### Criar ticket (destinatário = criador)
-# @name = createTicketSemAssignee
-
-POST /api/v1/tickets HTTP/1.1
-Host: {{host}}
-Content-Type: application/json
-
-{
-    "action": "Corrigir",
-    "object": "Bug no login",
-    "details": "O botão de login não responde no mobile",
-    "creatorId": 1
-}
-
-### Criar ticket com destinatário diferente
-# @name = createTicketComAssignee
-
-POST /api/v1/tickets HTTP/1.1
-Host: {{host}}
-Content-Type: application/json
-
-{
-    "action": "Revisar",
-    "object": "Documentação da API",
-    "details": "Revisar todos os endpoints do swagger",
-    "creatorId": 1,
-    "assigneeId": 2
-}
-
-### Criar ticket com observadores
-# @name = createTicketComObservers
-
-POST /api/v1/tickets HTTP/1.1
-Host: {{host}}
-Content-Type: application/json
-
-{
-    "action": "Implementar",
-    "object": "Relatório mensal",
-    "details": "Gerar PDF com os dados do mês",
-    "creatorId": 1,
-    "observers": ["kethelem.socoowski@gmail.com", "gestor@empresa.com"]
-}
-
-### Listar todos os tickets
-# @name = listTickets
-
-GET /api/v1/tickets HTTP/1.1
+GET /api/v1/vulnerability-reports HTTP/1.1
 Host: {{host}}
 Accept: application/json
 
-### Buscar ticket por id
-# @name = getTicket
-
-GET /api/v1/tickets/1 HTTP/1.1
-Host: {{host}}
-Accept: application/json
-
-### Colocar ticket em andamento (seta responsável)
-# @name = ticketEmAndamento
-
-PATCH /api/v1/tickets/1/status HTTP/1.1
-Host: {{host}}
-Content-Type: application/json
-
-{
-    "status": "EM_ANDAMENTO",
-    "responsibleId": 1
-}
-
-### Fechar ticket
-# @name = ticketFechado
-
-PATCH /api/v1/tickets/1/status HTTP/1.1
-Host: {{host}}
-Content-Type: application/json
-
-{
-    "status": "FECHADO"
-}
-
-### Cancelar ticket com motivo
-# @name = ticketCancelado
-
-PATCH /api/v1/tickets/1/status HTTP/1.1
-Host: {{host}}
-Content-Type: application/json
-
-{
-    "status": "CANCELADO",
-    "reason": "Cliente desistiu da solicitação"
-}
 
 
-# TICKET API - INVÁLIDOS ====================================================
+### GET THIRD PAGE
 
-### [INVÁLIDO] Criar ticket sem action
-POST /api/v1/tickets HTTP/1.1
-Host: {{host}}
-Content-Type: application/json
-
-{
-    "object": "Bug no login",
-    "creatorId": 1
-}
-
-### [INVÁLIDO] Criar ticket sem object
-POST /api/v1/tickets HTTP/1.1
-Host: {{host}}
-Content-Type: application/json
-
-{
-    "action": "Corrigir",
-    "creatorId": 1
-}
-
-### [INVÁLIDO] Criar ticket sem creatorId
-POST /api/v1/tickets HTTP/1.1
-Host: {{host}}
-Content-Type: application/json
-
-{
-    "action": "Corrigir",
-    "object": "Bug no login"
-}
-
-### [INVÁLIDO] Colocar em andamento sem responsibleId
-PATCH /api/v1/tickets/1/status HTTP/1.1
-Host: {{host}}
-Content-Type: application/json
-
-{
-    "status": "EM_ANDAMENTO"
-}
-
-### [INVÁLIDO] Cancelar sem motivo
-PATCH /api/v1/tickets/1/status HTTP/1.1
-Host: {{host}}
-Content-Type: application/json
-
-{
-    "status": "CANCELADO"
-}
-
-### [INVÁLIDO] Buscar ticket inexistente
-GET /api/v1/tickets/999 HTTP/1.1
+GET /api/v1/vulnerability-reports?page=3&size=10 HTTP/1.1
 Host: {{host}}
 Accept: application/json
