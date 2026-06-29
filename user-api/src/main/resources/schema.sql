@@ -27,26 +27,3 @@ CREATE TABLE IF NOT EXISTS profiles (
     type    VARCHAR(255),
     FOREIGN KEY (id) REFERENCES users(id)
 );
-CREATE TABLE IF NOT EXISTS tickets (
-    id             INTEGER      PRIMARY KEY AUTOINCREMENT,
-    action         VARCHAR(255) NOT NULL,
-    object         VARCHAR(255) NOT NULL,
-    details        TEXT,
-    status         VARCHAR(50)  NOT NULL DEFAULT 'ABERTO',
-    reason         TEXT,
-    creator_id     INTEGER      NOT NULL,
-    assignee_id    INTEGER      NOT NULL,
-    responsible_id INTEGER,
-    created_at     TIMESTAMP    NOT NULL,
-    updated_at     TIMESTAMP    NOT NULL,
-    FOREIGN KEY (creator_id)     REFERENCES users(id),
-    FOREIGN KEY (assignee_id)    REFERENCES users(id),
-    FOREIGN KEY (responsible_id) REFERENCES users(id)
-);
-
-CREATE TABLE IF NOT EXISTS ticket_observers (
-    ticket_id INTEGER      NOT NULL,
-    email     VARCHAR(255) NOT NULL,
-    PRIMARY KEY (ticket_id, email),
-    FOREIGN KEY (ticket_id) REFERENCES tickets(id)
-);

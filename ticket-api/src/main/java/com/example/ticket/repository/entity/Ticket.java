@@ -1,4 +1,4 @@
-package com.example.demo.repository.entity;
+package com.example.ticket.repository.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,12 +7,10 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -38,17 +36,14 @@ public class Ticket {
     @Column(columnDefinition = "TEXT")
     private String reason;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id", nullable = false)
-    private User creator;
+    @Column(name = "creator_email", nullable = false)
+    private String creatorEmail;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assignee_id", nullable = false)
-    private User assignee;
+    @Column(name = "assignee_email", nullable = false)
+    private String assigneeEmail;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "responsible_id")
-    private User responsible;
+    @Column(name = "responsible_email")
+    private String responsibleEmail;
 
     @ElementCollection
     @CollectionTable(name = "ticket_observers", joinColumns = @JoinColumn(name = "ticket_id"))
@@ -72,12 +67,12 @@ public class Ticket {
     public void setStatus(String status) { this.status = status; }
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
-    public User getCreator() { return creator; }
-    public void setCreator(User creator) { this.creator = creator; }
-    public User getAssignee() { return assignee; }
-    public void setAssignee(User assignee) { this.assignee = assignee; }
-    public User getResponsible() { return responsible; }
-    public void setResponsible(User responsible) { this.responsible = responsible; }
+    public String getCreatorEmail() { return creatorEmail; }
+    public void setCreatorEmail(String creatorEmail) { this.creatorEmail = creatorEmail; }
+    public String getAssigneeEmail() { return assigneeEmail; }
+    public void setAssigneeEmail(String assigneeEmail) { this.assigneeEmail = assigneeEmail; }
+    public String getResponsibleEmail() { return responsibleEmail; }
+    public void setResponsibleEmail(String responsibleEmail) { this.responsibleEmail = responsibleEmail; }
     public List<String> getObservers() { return observers; }
     public void setObservers(List<String> observers) { this.observers = observers; }
     public LocalDateTime getCreatedAt() { return createdAt; }

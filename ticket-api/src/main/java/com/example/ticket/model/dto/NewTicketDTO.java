@@ -1,4 +1,4 @@
-package com.example.demo.model.dto;
+package com.example.ticket.model.dto;
 
 import java.util.List;
 

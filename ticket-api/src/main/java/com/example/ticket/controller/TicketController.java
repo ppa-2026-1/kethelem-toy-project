@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.ticket.controller;
 
 import java.util.List;
 
@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.TicketService;
-import com.example.demo.model.dto.NewTicketDTO;
-import com.example.demo.model.dto.TicketStatusUpdateDTO;
-import com.example.demo.repository.TicketRepository;
-import com.example.demo.repository.entity.Ticket;
+import com.example.ticket.model.TicketService;
+import com.example.ticket.model.dto.NewTicketDTO;
+import com.example.ticket.model.dto.TicketStatusUpdateDTO;
+import com.example.ticket.repository.TicketRepository;
+import com.example.ticket.repository.entity.Ticket;
 
 @RestController
 @RequestMapping("/api/v1/tickets")

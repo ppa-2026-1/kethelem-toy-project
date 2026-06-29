@@ -1,12 +1,16 @@
 package com.example.demo.model;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
+import com.example.demo.model.dto.NewTicketDTO;
 import com.example.demo.model.dto.NewUserDTO;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
@@ -21,23 +25,22 @@ public class UserService {
     private RoleRepository roleRepository;
     private BCryptPasswordEncoder passwordEncoder;
     private Set<String> defaultRoles;
+    private RestClient ticketRestClient;
 
     public UserService(
-            UserRepository userRepository, 
+            UserRepository userRepository,
             RoleRepository roleRepository,
-            @Value("${app.user.default.roles}") Set<String> defaultRoles) {
+            @Value("${app.user.default.roles}") Set<String> defaultRoles,
+            RestClient ticketRestClient) {
 
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;   
+        this.roleRepository = roleRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.defaultRoles = defaultRoles;
+        this.ticketRestClient = ticketRestClient;
     }
-    
-    
-    public void registerNewUser(NewUserDTO newUser) {
 
-        // regras de negócio no Controller
-        // é um mau cheiro de projeto (smell)
+    public void registerNewUser(NewUserDTO newUser) {
         if (newUser.email() == null || newUser.password() == null) {
             throw new IllegalArgumentException("Email e senha são obrigatórios");
         }
@@ -53,7 +56,7 @@ public class UserService {
         if (!newUser.password().matches("^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$")) {
             throw new IllegalArgumentException("A senha deve ter pelo menos 8 caracteres e conter pelo menos uma letra e um número");
         }
-        
+
         userRepository.findByEmail(newUser.email())
             .ifPresent(user -> {
                 throw new IllegalArgumentException("Usuário com o email " + newUser.email() + " já existe");
@@ -65,13 +68,11 @@ public class UserService {
             });
 
         User user = new User();
-        
         user.setEmail(newUser.email());
         user.setHandle(newUser.handle() != null ? newUser.handle() : generateHandle(newUser.email()));
         user.setPassword(passwordEncoder.encode(newUser.password()));
-        
+
         Set<Role> roles = new HashSet<>();
-        
         roles.addAll(roleRepository.findByNameIn(defaultRoles));
 
         Set<Role> additionalRoles = roleRepository.findByNameIn(newUser.roles());
@@ -86,17 +87,34 @@ public class UserService {
         user.setRoles(roles);
 
         Profile profile = new Profile();
-        
         profile.setName(newUser.name());
         profile.setCompany(newUser.company());
         profile.setType(newUser.type() != null ? newUser.type() : Profile.AccountType.FREE);
-
         profile.setUser(user);
         user.setProfile(profile);
 
-        userRepository.save(user); 
+        userRepository.save(user);
+
+        criarTicketInstalacaoWorkstation(user.getEmail());
     }
 
+    private void criarTicketInstalacaoWorkstation(String userEmail) {
+        NewTicketDTO ticket = new NewTicketDTO(
+            "Instalar",
+            "Workstation",
+            "Instalação de workstation para novo usuário: " + userEmail,
+            userEmail,
+            userEmail,
+            List.of()
+        );
+
+        ticketRestClient.post()
+            .uri("/api/v1/tickets")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(ticket)
+            .retrieve()
+            .toBodilessEntity();
+    }
 
     private String generateHandle(String email) {
         String[] parts = email.split("@");

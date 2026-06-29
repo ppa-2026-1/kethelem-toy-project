@@ -1,0 +1,15 @@
+package com.example.ticket.transversal.configuration;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestClient;
+
+@Configuration
+public class RestClientConfig {
+
+    @Bean
+    public RestClient notificationRestClient(@Value("${app.notification.url}") String notificationUrl) {
+        return RestClient.builder().baseUrl(notificationUrl).build();
+    }
+}
